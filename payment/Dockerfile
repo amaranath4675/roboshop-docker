@@ -3,7 +3,7 @@ WORKDIR /app
 COPY *.py .
 COPY requirements.txt .
 COPY payment.ini .
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 ENV CART_HOST="cart" \
     CART_PORT="8080" \
     USER_HOST="user" \      

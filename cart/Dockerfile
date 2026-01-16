@@ -1,7 +1,7 @@
 FROM node:20
 WORKDIR /app
-COPY *.json ./
-COPY *.js ./
+COPY package.json .
+COPY *.js .
 RUN npm install
 EXPOSE 8080
 ENV REDIS_HOST="redis" \

@@ -4,11 +4,13 @@ services:
     container_name: mongodb
     volumes:
     - mongodb:/data/db
+    
   redis:
     image: redis:7
     container_name: redis
     volumes:
       - redis:/data
+
   mysql:
     image: mysql:v1
     container_name: mysql
@@ -20,6 +22,7 @@ services:
     container_name: catalogue
     depends_on:
       - mongodb
+
   user:
     image: user:v1
     container_name: user
@@ -38,6 +41,7 @@ services:
       - payment
     ports:
       - "80:80"
+
   rabbitmq:
     image: rabbitmq:3
     container_name: rabbitmq
