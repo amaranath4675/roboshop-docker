@@ -51,20 +51,22 @@ services:
     image: cart:v1
     container_name: cart
     depends_on:
-      - mongodb
       - redis
-      - rabbitmq
+      - catalogue
 
   shipping:
     image: shipping:v1  
     container_name: shipping
     depends_on:
       - mysql
+      - cart
   payment:
     image: payment:v1 
     container_name: payment
     depends_on:
-      - mysql
+      - rabbitmq
+      - cart
+      - user
 networks:
   default:
     driver: bridge
