@@ -1,47 +1,29 @@
 services:
+  catalogue:
+    build:
+      context: ./catalogue
+      dockerfile: Dockerfile
+    image: amar/catalogue:v1
+    container_name: catalogue
+    depends_on:
+    - mongodb
   mongodb:
-    image: mongodb:v1
+    build: ./mongodb
+    image: amar/mongodb:v1
     container_name: mongodb
     volumes:
     - mongodb:/data/db
-    
   redis:
-    image: redis:7
+    image: redis:7.0
     container_name: redis
     volumes:
-      - redis:/data
-
+    - redis:/data
   mysql:
-    image: mysql:v1
+    build: ./mysql
+    image: amar/mysql:v1
     container_name: mysql
     volumes:
     - mysql:/var/lib/mysql
-
-  catalogue:  
-    image: catalogue:v1
-    container_name: catalogue
-    depends_on:
-      - mongodb
-
-  user:
-    image: user:v1
-    container_name: user
-    depends_on:
-      - mongodb
-      - redis
-
-  frontend:
-    image: frontend:v1  
-    container_name: frontend  
-    depends_on:
-      - catalogue
-      - user
-      - cart
-      - shipping
-      - payment
-    ports:
-      - "80:80"
-
   rabbitmq:
     image: rabbitmq:3
     container_name: rabbitmq
@@ -50,35 +32,54 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: roboshop
       RABBITMQ_DEFAULT_PASS: roboshop123
-
+  user:
+    build: ./user
+    image: amar/user:v1
+    container_name: user
+    depends_on:
+    - mongodb
+    - redis
   cart:
-    image: cart:v1
+    build: ./cart
+    image: amar/cart:v1
     container_name: cart
     depends_on:
-      - redis
-      - catalogue
-
+    - redis
+    - catalogue
   shipping:
-    image: shipping:v1  
+    build: ./shipping
+    image: amar/shipping:v1
     container_name: shipping
     depends_on:
-      - mysql
-      - cart
+    - mysql
+    - cart
   payment:
-    image: payment:v1 
+    build: ./payment
+    image: amar/payment:v1
     container_name: payment
     depends_on:
-      - rabbitmq
-      - cart
-      - user
+    - rabbitmq
+    - cart
+    - user
+  frontend:
+    build: ./frontend
+    image: amar/frontend:v1
+    container_name: frontend
+    ports:
+    - "80:80"
+    depends_on:
+    - catalogue
+    - user
+    - cart
+    - shipping
+    - payment
 networks:
   default:
     driver: bridge
     name: roboshop
-    external: false
-
+    external: false # true if you have created network manually using docker network command
 volumes:
-  mongodb:
+  mongodb: # docker volume create mongodb. /var/lib/docker/volumes
   redis:
   mysql:
-  rabbitmq: 
+  rabbitmq:
